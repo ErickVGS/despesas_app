@@ -1,66 +1,106 @@
-import 'dart:ffi';
-
-import 'package:despesas/models/transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class TransactionForm extends StatelessWidget {
-  
-  final titleController = TextEditingController();
-  final valueController = TextEditingController();
-
-  final void Function(String, double) onSubmit;
+class TransactionForm extends StatefulWidget {
+  final void Function(String, double, DateTime) onSubmit;
 
   TransactionForm(this.onSubmit);
 
-  _submitForm(){
-   
-                          final title =  titleController.text;
-                          final value = double.tryParse(valueController.text) ?? 0.0;
+  @override
+  State<TransactionForm> createState() => _TransactionFormState();
+}
 
-                          if(title.isEmpty || value <=0 ){
-                            return;
-                          }
+class _TransactionFormState extends State<TransactionForm> {
+  final _titleController = TextEditingController();
+  final _valueController = TextEditingController();
+    DateTime? _selectedDate = DateTime.now();
 
-                         onSubmit(title, value);
+  _submitForm() {
+    final title = _titleController.text;
+    final value = double.tryParse(_valueController.text) ?? 0.0;
 
-                         
-                    
+    if (title.isEmpty || value <= 0 || _selectedDate == null) {
+      return;
+    }
+
+    widget.onSubmit(title, value, _selectedDate!);
+  }
+
+  _showDatePicker (){
+    showDatePicker(
+      context: context, 
+      initialDate: DateTime.now(), 
+      firstDate: DateTime(1990), 
+      lastDate: DateTime.now(),
+       ).then((pickedDate){
+         if (pickedDate == null){
+            return;
+         }
+        setState(() {
+          _selectedDate = pickedDate;
+        });
+       } );
   }
 
   @override
   Widget build(BuildContext context) {
-    return   Card(
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(children: <Widget>[
-                  TextField(
-                    controller: titleController,
-                     onSubmitted: (_) => _submitForm(),
-                    decoration: const InputDecoration(labelText: 'Titulo'),
+    return Card(
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(children: <Widget>[
+          TextField(
+            controller: _titleController,
+            onSubmitted: (_) => _submitForm(),
+            decoration: const InputDecoration(labelText: 'Titulo'),
+          ),
+          TextField(
+            controller: _valueController,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            onSubmitted: (_) => _submitForm(),
+            decoration: const InputDecoration(labelText: 'Valor (R\$)'),
+          ),
+          Container(
+            height: 70,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                  _selectedDate == null ?  'Nenhuma data selecionana!'
+                  : 'Data Selecionada: ${ DateFormat ('dd/MM/y').format(_selectedDate!)}',
+                    ),
+                ),
+                TextButton(
+                  child: const Text(
+                    'Selecionar Data',  
+                     style: TextStyle(                   
+                      fontWeight: FontWeight.bold,
+                    ),                 
                   ),
-                  TextField(
-                    controller: valueController,
-                    keyboardType: TextInputType.numberWithOptions(decimal: true),
-                    onSubmitted: (_) => _submitForm(),
-                    decoration: const InputDecoration(labelText: 'Valor (R\$)'),
+                  style: TextButton.styleFrom(
+                    primary: Theme.of(context).primaryColor,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        child: const Text(
-                          'Nova Transação',
-                          style: TextStyle(color: Colors.purple),
-                        ),
-                        onPressed: () {
-                         _submitForm;
-                        },
-                      ),
-                    ],
-                  )
-                ]),
+                  onPressed: _showDatePicker,
+                ),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                child: const Text('Nova transação'),
+                style: ElevatedButton.styleFrom(
+                  primary: Theme.of(context).primaryColor,
+                ),
+                onPressed: () {
+                  _submitForm;
+                },
               ),
-            );
+            ],
+          )
+        ]),
+      ),
+    );
   }
 }
