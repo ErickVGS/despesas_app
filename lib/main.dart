@@ -8,13 +8,16 @@ import 'components/transaction_list.dart';
 import '/models/transaction.dart';
 import 'dart:math';
 
-main() => runApp(DespesasApp());
+main() => runApp(const DespesasApp());
 
 class DespesasApp extends StatelessWidget {
+  const DespesasApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = ThemeData();
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: MyHomePage(),
       theme: ThemeData(
           primarySwatch: Colors.purple, //Estilo com theme
@@ -117,17 +120,16 @@ class _MyHomePageState extends State<MyHomePage> {
     final appBar = AppBar(
       title: const Text('Despesas Pessoais'),
       actions: <Widget>[
-         IconButton(        
-          icon: Icon(_showChart ? Icons.list : Icons.show_chart),
-          onPressed: () {
-            setState(() {
-              _showChart = !_showChart;
-            });
-          }
-        ),
-        IconButton(        
+        IconButton(
+            icon: Icon(_showChart ? Icons.list : Icons.show_chart),
+            onPressed: () {
+              setState(() {
+                _showChart = !_showChart;
+              });
+            }),
+        IconButton(
           icon: Icon(Icons.add),
-          onPressed: () => _openTransactioonFormModal(context) ,
+          onPressed: () => _openTransactioonFormModal(context),
         )
       ],
     );
