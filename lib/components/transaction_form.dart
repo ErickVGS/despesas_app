@@ -47,9 +47,7 @@ class _TransactionFormState extends State<TransactionForm> {
               label: 'Titulo',
               controller: _titleController,
               onSubmitted: (_) => _submitForm(),
-              keyboardType: TextInputType.text,
-              
-              
+              keyboardType: TextInputType.text,             
             ),
             AdaptativeTextField(
               label: 'Valor (R\$)',

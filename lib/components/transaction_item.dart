@@ -25,8 +25,8 @@ class _TransactionItemState extends State<TransactionItem> {
  
 
  static const colors  = [
-    Colors.amber,
-    Colors.lime,
+    Colors.black,
+    Colors.orange,
     Colors.tealAccent,
     Colors.redAccent,
     Colors.yellowAccent,
